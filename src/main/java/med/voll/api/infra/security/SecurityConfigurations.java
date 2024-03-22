@@ -25,7 +25,10 @@ public class SecurityConfigurations {
         return
                 http.csrf(csrf -> csrf.disable())
                         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                        .authorizeHttpRequests(req -> {req.requestMatchers(HttpMethod.POST, "/login", "consultas", "medicos", "pacientes").permitAll()
+                        .authorizeHttpRequests(req -> {req.requestMatchers(HttpMethod.POST, "/login", "/consultas", "/medicos", "/pacientes").permitAll();
+                                               req.requestMatchers(HttpMethod.GET,"/login", "/consultas", "/medicos", "/pacientes").permitAll();
+                                               req.requestMatchers(HttpMethod.DELETE,"/login", "/consultas", "/medicos", "/pacientes").permitAll();
+                                               req.requestMatchers(HttpMethod.PUT,"/login", "/consultas", "/medicos", "/pacientes").permitAll()
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
                             req.anyRequest().authenticated();
                         })
