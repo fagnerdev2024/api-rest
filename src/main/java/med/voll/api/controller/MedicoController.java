@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/medicos")
 public class MedicoController {
@@ -23,13 +21,11 @@ public class MedicoController {
     @PostMapping
     @Transactional
     public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroMedico dados, UriComponentsBuilder uriBuilder) {
-        boolean nomeExistente = medicoRepository.existsByNome(dados.nome());
-        if (nomeExistente) {
-            return ResponseEntity.badRequest().body(Map.of("mensagem", "Já existe um médico cadastrado com este nome."));
-        }
         var medico = new Medico(dados);
         medicoRepository.save(medico);
+
         var uri = uriBuilder.path("/medicos/{id}").buildAndExpand(medico.getId()).toUri();
+
         return ResponseEntity.created(uri).body(new DadosDetalhamentoMedico(medico));
     }
 
