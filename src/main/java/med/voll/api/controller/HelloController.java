@@ -16,6 +16,7 @@ public class HelloController {
     public Map<String, String> olaMundo() {
         Map<String, String> map = new HashMap<>();
         map.put("message", "sucess");
+
         return map;
     }
 }
