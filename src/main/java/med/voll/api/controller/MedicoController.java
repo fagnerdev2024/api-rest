@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/medicos")
 @SecurityRequirement(name = "bearer-key")
@@ -19,6 +22,15 @@ public class MedicoController {
 
     @Autowired
     private MedicoRepository medicoRepository;
+
+    @Autowired
+    private MedicoService medicoService;
+
+    /*public MedicoController(MedicoService medicoService) {
+        this.medicoService = medicoService;
+    }*/
+
+
 
     @PostMapping
     @Transactional
@@ -57,6 +69,11 @@ public class MedicoController {
     public ResponseEntity detalhar(@PathVariable Long id) {
         var medico = medicoRepository.getReferenceById(id);
         return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
+    }
+
+    @GetMapping("/nomes")
+    public Map<String, List<String>> getNomesDistintos() {
+        return medicoService.listarNomesDistintos();
     }
 
 }
