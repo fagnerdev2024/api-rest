@@ -1,5 +1,6 @@
 package med.voll.api.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import med.voll.api.domain.medico.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,25 +12,34 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/medicos")
+@SecurityRequirement(name = "bearer-key")
 public class MedicoController {
 
     @Autowired
     private MedicoRepository medicoRepository;
 
+    @Autowired
+    private MedicoService medicoService;
+
+    /*public MedicoController(MedicoService medicoService) {
+        this.medicoService = medicoService;
+    }*/
+
+
+
     @PostMapping
     @Transactional
     public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroMedico dados, UriComponentsBuilder uriBuilder) {
-        boolean nomeExistente = medicoRepository.existsByNome(dados.nome());
-        if (nomeExistente) {
-            return ResponseEntity.badRequest().body(Map.of("mensagem", "Já existe um médico cadastrado com este nome."));
-        }
         var medico = new Medico(dados);
         medicoRepository.save(medico);
+
         var uri = uriBuilder.path("/medicos/{id}").buildAndExpand(medico.getId()).toUri();
+
         return ResponseEntity.created(uri).body(new DadosDetalhamentoMedico(medico));
     }
 
@@ -59,6 +69,11 @@ public class MedicoController {
     public ResponseEntity detalhar(@PathVariable Long id) {
         var medico = medicoRepository.getReferenceById(id);
         return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
+    }
+
+    @GetMapping("/nomes")
+    public Map<String, List<String>> getNomesDistintos() {
+        return medicoService.listarNomesDistintos();
     }
 
 }
